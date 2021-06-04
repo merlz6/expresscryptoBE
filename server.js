@@ -50,30 +50,62 @@ app.use('/users', userController);
 
 
 //LOGIN - start sessions route
-app.post('/session', (req, res) => {
+app.post('/session/:username/:password', (req, res) => {
     //See if user exists
-    User.findOne({ username: req.body.username }, (err, foundUser) => {
+    User.findOne({ username: req.params.username }, (err, foundUser) => {
         if (err) {
             //send error if error
             res.send(err);
         } else if (!foundUser) {
             //send to sign up if user doesn't exist
-            res.redirect('/user/new');
+            res.json(err);
         } else {
             //copmpare passwords
-            if (bcrypt.compareSync(req.body.password, foundUser.password)) {
+            if (bcrypt.compareSync(req.params.password, foundUser.password)) {
                 //send to GM page
                 req.session.currentUser = foundUser.username;
+                req.session.error=null
+                req.session.userObj = foundUser
                 // res.redirect('/games');
                 res.json(req.session)
             } else {
                 //tell them its a wrong password
                 req.session.error = "Wrong Password"
-                res.send(req.session.error);
+                res.json(req.session);
             }
         }
     });
 });
+// no query strings req.body usage
+// app.post('/session/', (req, res) => {
+//     //See if user exists
+//     User.findOne({ username: req.body.username }, (err, foundUser) => {
+//         if (err) {
+//             //send error if error
+//             res.send(err);
+//         } else if (!foundUser) {
+//             //send to sign up if user doesn't exist
+//             res.json(err);
+//         } else {
+//             //copmpare passwords
+//             if (bcrypt.compareSync(req.body.password, foundUser.password)) {
+//                 //send to GM page
+//                 req.session.currentUser = foundUser.username;
+//                 req.session.error=null
+//                 req.session.userObj = foundUser
+//                 // res.redirect('/games');
+//                 res.json(req.session)
+//             } else {
+//                 //tell them its a wrong password
+//                 req.session.error = "Wrong Password"
+//                 res.json(req.session);
+//             }
+//         }
+//     });
+// })
+
+
+
 
 //destroy sessions route (LOGOUT)
 app.delete('/sessions/', (req, res) => {

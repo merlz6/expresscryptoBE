@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
     uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
     qs: {
       'start': '1',
-      'limit': '10',
+      'limit': '25',
       'convert': 'USD'
     },
     headers: {

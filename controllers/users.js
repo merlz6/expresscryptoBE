@@ -20,4 +20,13 @@ users.post('/', (req, res) => {
         res.redirect('/');
     });
 });
+
+
+
+users.post('/:username', (req , res)=>{
+  User.find({username:req.params.username}, (err, foundUser)=>{
+    res.json(foundUser)
+  })
+})
+
 module.exports = users;
