@@ -11,10 +11,17 @@ const userController = require('./controllers/users.js'); //Users
 const User = require('./models/users.js'); // User Mode
 const bcrypt = require('bcryptjs'); //bcrypt to encrypt passwords
 
+const cors = require('cors')
+const corsOptions = {
 
+  origin: process.env.cor,
+  optionsSuccessStatus:200
+
+}
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
+app.use(cors(corsOptions))
 app.use(methodOverride('_method'));
 app.use(
     session({
