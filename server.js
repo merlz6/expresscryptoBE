@@ -6,7 +6,13 @@ require('dotenv').config()
 const port = process.env.PORT || 3000; // Port Number
 const DBURI = process.env.MONGOURI
 const session = require('express-session');
+const cryptoController = require('./controllers/crypto.js'); //Users
 const userController = require('./controllers/users.js'); //Users
+const User = require('./models/users.js'); // User Mode
+const bcrypt = require('bcryptjs'); //bcrypt to encrypt passwords
+
+
+
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
@@ -31,13 +37,13 @@ mongoose.connection.once('open', () => {
 app.get('/', (req, res) => {
     res.send('home Page');
 })
-// app.use('/crypto', cryptoController);
+app.use('/crypto', cryptoController);
 app.use('/users', userController);
 
 
 
 //LOGIN - start sessions route
-app.post('/sessions', (req, res) => {
+app.post('/session', (req, res) => {
     //See if user exists
     User.findOne({ username: req.body.username }, (err, foundUser) => {
         if (err) {
@@ -51,10 +57,12 @@ app.post('/sessions', (req, res) => {
             if (bcrypt.compareSync(req.body.password, foundUser.password)) {
                 //send to GM page
                 req.session.currentUser = foundUser.username;
-                res.redirect('/games');
+                // res.redirect('/games');
+                res.json(req.session)
             } else {
                 //tell them its a wrong password
-                res.send('WRONG PASSWORD');
+                req.session.error = "Wrong Password"
+                res.send(req.session.error);
             }
         }
     });
