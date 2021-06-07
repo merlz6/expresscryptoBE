@@ -50,9 +50,10 @@ app.use('/users', userController);
 
 
 //LOGIN - start sessions route
-app.post('/session/:username/:password', (req, res) => {
+app.post('/session', (req, res) => {
+  console.log(req)
     //See if user exists
-    User.findOne({ username: req.params.username }, (err, foundUser) => {
+    User.findOne({ username: req.body.username }, (err, foundUser) => {
         if (err) {
             //send error if error
             res.send(err);
@@ -67,11 +68,11 @@ app.post('/session/:username/:password', (req, res) => {
                 req.session.error=null
                 req.session.userObj = foundUser
                 // res.redirect('/games');
-                res.json(req.session)
+                res.json(req.session.userObj)
             } else {
                 //tell them its a wrong password
                 req.session.error = "Wrong Password"
-                res.json(req.session);
+                res.json(req.session.error);
             }
         }
     });

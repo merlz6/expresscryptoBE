@@ -62,7 +62,23 @@ app.get('/quote/:id', (req, res) => {
 })
 
 
+app.get('/meta/:id', (req, res)=> {
+  const requestOptions = {
+    method: 'GET',
+    uri: `https://pro-api.coinmarketcap.com/v1/cryptocurrency/info?id=${req.params.id}`,
+    headers: {
+      'X-CMC_PRO_API_KEY': process.env.APIKEY
+    },
+    json: true,
+    gzip: true
+  }
 
+  rp(requestOptions).then(response => {
+    res.json(response);
+  }).catch((err) => {
+    console.log('API call error:', err.message);
+  });
+})
 
 
 
